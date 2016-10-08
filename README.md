@@ -1,6 +1,6 @@
 # presentations
 
-Collections of presentations I gave during Python Gdansk meeting (PyGda). I hope that this collection will grow...
+Collections of presentations I gave during Python Gdansk meetings (PyGda). I hope that this collection will grow...
 
 Please look at:
 
