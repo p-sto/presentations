@@ -40,6 +40,15 @@ True
 True
 >>> x, y = 500, 500
 >>> x is y
+True
+# but if you define in separate lines
+>>> x = 100
+>>> y = 100
+>>> x is y
+True
+>>> x = 500
+>>> y = 500
+>>> x is y
 False
 ```
 
@@ -102,8 +111,11 @@ Segmentation fault (core dumped)
 >>> del a
 >>> ctypes.c_long.from_address(address).value
 626     # should be the same each time we launch fresh interpreter
->>> sys.getrefcount(None)
+>>> sys.getrefcount(None)       # None is just an object!
 2522
+>>> a = None
+>>> sys.getrefcount(None)
+>>> 2523
 # now you may know why we compare to None using `is` operator
 ```
 
@@ -112,12 +124,13 @@ Garbage Collection
 ```python
 >>> bar = Foo()
 >>> gc.get_referents(bar)
-[<class __main__.Foo at 0x7f072b00fae0>, {}]
+[<class __main__.Foo at 0x7f072b00fae0>, {}]        # class definition
 >>> gc.is_tracked(bar)
 True
 >>> address = id(bar)
 >>> ctypes.cast(address, ctypes.py_object).value
-<__main__.Foo instance at 0x7f072afc5950>
+<__main__.Foo instance at 0x7f072afc5950>       # class instance
+>>> del bar
 >>> ctypes.cast(address, ctypes.py_object).value
 <__main__.Foo instance at 0x7f072afc5950>   # still exists!
 >>> gc.collect()
@@ -130,6 +143,16 @@ True
 Fatal Python error: GC object already tracked
 Aborted (core dumped)
 ```
+
+Python's GC key words:  
+- reference counting
+- reference cycle detection
+- garbage collection generations (3 in case of Python)
+- mark and sweep algorithm
+- weak reference
+
+You may also want to compare Python's GC solution to Ruby's,
+which uses techniques called `free list` and `stop the world algorithm`.
 
 PyObject
 ---
@@ -241,14 +264,30 @@ https://github.com/python/cpython/blob/master/Objects/listobject.c#L24
 1048
 ```
 
-Dict pre-allocates 8 chunks of memory and grow x4 when is 2/3 full.
-If there are more than 50k allocated chunks of memory, then it grow 2x with
-every re-allocation, so allocated chunks will be:  
+Dict pre-allocates 8 chunks of memory and grows x4 when is 2/3 full.
+If there are more than 50k allocated chunks of memory, then it grows 2x with
+every re-allocation. Number of allocated chunks of memory will be as followed:    
 8, 32, 128, 514, 2048, 8192, 32768, 131072, 262133...
+
+How dict works:  
+
+- Calculate object's hash e.g. 12345
+- Calculate index = hash AND mask
+- mask = allocated elements - 1
+- 0b001 = 0b11000000111001 AND 0b111        # for mask = 7
+- index = 1
+- If index == 1 is empty -> put pair of key and value there
+- If index == 1 is not empty -> new index = index + 1 (check if empty again)
+
+```
+Dict's index calculation is not really focused on avoiding collisions.
+It's focused on fast computation since everytime we re-size dict we
+need to re-calculate all indexes (mask changes).
+```
 
 ### Tuple
 Tuples are simple and there's no magic here, since tuple has fixed size
-there is magical pre-allocation:
+there is no magical pre-allocation:
 
 ```python
 >>> import sys
@@ -264,19 +303,43 @@ there is magical pre-allocation:
 ```
 
 
-Frames
+inspect module
 ---
+This module can help us get information about object's properties at runtime.
+
+
+### frames
 Python's interpreter works as a stack machine. Code at runtime is represented
-by frames, which are operating over virtual stack. At the same time,
-frames are just another object! If so, we can access them.
+by frames which are operating over virtual stack. At the same time,
+frames are just regular objects! If so, we can access them.
 
+```python
+>>> import inspect
+>>> def hello():
+...     current_frame = inspect.currentframe()
+...     print(inspect.getframeinfo(current_frame))
+...     print(current_frame.f_globals)
+...     print(current_frame.f_locals)
+...     print(current_frame.f_code)
+...     print(current_frame.f_back)     # previous frame, the caller
+... 
+>>> hello()
+Traceback(filename='<stdin>', lineno=3, function='hello', code_context=None, index=None)
+{'a': <function hello at 0x7f0889373938>, '__builtins__': <module '__builtin__' (built-in)>, 'inspect': <module 'inspect' from '/usr/lib/python2.7/inspect.pyc'>, '__doc__': None, 'ctypes': <module 'ctypes' from '/usr/lib/python2.7/ctypes/__init__.pyc'>, 'address': 139674638563640, '__name__': '__main__', '__package__': None, 'hello': <function hello at 0x7f08893738c0>}
+{'current_frame': <frame object at 0x7f088adadc58>}
+<code object hello at 0x7f0889388730, file "<stdin>", line 1>
+<frame object at 0x7f0889384be8>
+>>> address = 0x7f0889384be8
+>>> func = ctypes.cast(address, ctypes.py_object).value     # we can access this frame by id!
+>>> func
+<frame object at 0x7f0889384be8>
+```
+As crazy as it sounds but we can access data from previous frames. It can be
+used e.g for some logging purposes or debug stuff.  
 
-Stack trace
----
+...in fact it's not that crazy, since stack trace is just an example of
+a useful information obtained from runtime frames.
 
-
-Memory allocator
----
 
 dis module
 ---
@@ -306,4 +369,5 @@ https://github.com/python/cpython/blob/master/Python/ceval.c#L1490
 [10 hrs CPython interpreter tutorial](https://pg.ucsd.edu/cpython-internals.htm)  
 [Frames visualisation](http://www.pythontutor.com/)  
 [CPython Internals - Book](https://realpython.com/products/cpython-internals-book/)  
-[Python interpreter consts definitions](https://github.com/python/cpython/blob/master/Include/pyport.h)
+[Python interpreter consts definitions](https://github.com/python/cpython/blob/master/Include/pyport.h)  
+[GC explained](https://rushter.com/blog/python-garbage-collector/)
