@@ -170,7 +170,7 @@ typedef struct _object {
 } PyObject;
 
 ```
-PyObjects acts as a interface.
+PyObject acts as a interface.
 
 
 source:  
