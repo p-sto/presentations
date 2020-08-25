@@ -17,7 +17,7 @@ Id, hash
 
 ```python
 >>> id(bar)
->>> hash(bar)       # hash = id(bar) * 4 in default implementation
+>>> hash(bar)       # hash = id(bar) * 16 in default implementation
 ```
 
 Python's `is` operates on ids.  
