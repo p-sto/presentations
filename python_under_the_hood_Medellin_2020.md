@@ -361,6 +361,10 @@ Python's main loop iterates over bytecode and execute specific functions
 based on opcode id. You can check Python's main loop implementation here:  
 https://github.com/python/cpython/blob/master/Python/ceval.c#L1490
 
+weakref
+---
+TODO 
+
 ### Resources
 
 [Python source code](https://github.com/python/cpython)  
