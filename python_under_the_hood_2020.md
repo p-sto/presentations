@@ -52,6 +52,27 @@ True
 False
 ```
 
+String intering
+---
+
+String intering is a technique for effective sring objects reusing.
+Instead of creating gazillion of new strings object, Python caches strings and re-uses them to form new one.
+String intering is not always performed:
+
+```python
+>>> "hell" + "o" is "hello"     # automatic string intering
+True
+>>> s1 = 'hell'
+>>> s2 = 'hello'
+>>> s1 + 'o' is s2              # not interned strings
+False
+>>> s1 + 'o' == s2
+True
+```
+
+To learn more, read about [Flyweight](https://www.youtube.com/watch?v=2C71YTKklT8) design pattern.
+
+
 Ref count
 ---
 ```python
