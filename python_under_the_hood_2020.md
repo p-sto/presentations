@@ -55,8 +55,8 @@ False
 String intering
 ---
 
-String intering is a technique for effective sring objects reusing.
-Instead of creating gazillion of new strings object, Python caches strings and re-uses them to form new one.
+String intering is a technique for effective string objects reusing.
+Instead of creating gazillion of new strings objects, Python caches strings and re-uses them to form new one.
 String intering is not always performed:
 
 ```python
