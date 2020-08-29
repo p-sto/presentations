@@ -120,26 +120,26 @@ Segmentation fault (core dumped)
 # now you may know why we compare to None using `is` operator
 ```
 
-String intering
+String interning
 ---
 
-String intering is a technique for effective string objects reusing.
+String interning is a technique for effective string objects reusing.
 Instead of creating gazillion of new strings objects, Python caches strings and re-uses them if needed.
-String intering is not always performed:
+String interning is not always performed:
 
 ```python
 >>> import ctypes
 >>> "hell" + "o" is "hello"
-True                                                # automatic string intering
+True                                                # automatic string interning
 >>> s1 = 'hell'
 >>> s2 = 'hello'
 >>> s1 + 'o' is s2
-False                                               # not interned strings
+False                                               # not interning strings
 >>> s1 + 'o' == s2
 True
 >>> s3 = 'hello'
 >>> ctypes.c_long.from_address(id(s3)).value
-2                                                   # string intering
+2                                                   # string interning
 >>> s4 = 'hello from the other side'
 >>> s5 = 'hello from the other side'
 >>> ctypes.c_long.from_address(id(s5)).value        
