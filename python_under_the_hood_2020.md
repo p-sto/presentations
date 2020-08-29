@@ -52,26 +52,6 @@ True
 False
 ```
 
-String intering
----
-
-String intering is a technique for effective string objects reusing.
-Instead of creating gazillion of new strings objects, Python caches strings and re-uses them to form new one.
-String intering is not always performed:
-
-```python
->>> "hell" + "o" is "hello"     # automatic string intering
-True
->>> s1 = 'hell'
->>> s2 = 'hello'
->>> s1 + 'o' is s2              # not interned strings
-False
->>> s1 + 'o' == s2
-True
-```
-
-To learn more, read about [Flyweight](https://www.youtube.com/watch?v=2C71YTKklT8) design pattern.
-
 
 Ref count
 ---
@@ -139,6 +119,40 @@ Segmentation fault (core dumped)
 >>> 2523
 # now you may know why we compare to None using `is` operator
 ```
+
+String intering
+---
+
+String intering is a technique for effective string objects reusing.
+Instead of creating gazillion of new strings objects, Python caches strings and re-uses them if needed.
+String intering is not always performed:
+
+```python
+>>> import ctypes
+>>> "hell" + "o" is "hello"
+True                                                # automatic string intering
+>>> s1 = 'hell'
+>>> s2 = 'hello'
+>>> s1 + 'o' is s2
+False                                               # not interned strings
+>>> s1 + 'o' == s2
+True
+>>> s3 = 'hello'
+>>> ctypes.c_long.from_address(id(s3)).value
+2                                                   # string intering
+>>> s4 = 'hello from the other side'
+>>> s5 = 'hello from the other side'
+>>> ctypes.c_long.from_address(id(s5)).value        
+1                                                   # doesn't work for longs strings :(
+>>> s6 = '{}o'.format(s1)
+>>> s6
+>>> ctypes.c_long.from_address(id(s6)).value        # worked!
+2
+>>> ctypes.c_long.from_address(id(s1)).value
+1                                                   # but s1 is not re-used i.e. s6 is completely new object, not an object reffering to s1 and 'o' letter
+```
+
+To learn more, read about [Flyweight](https://www.youtube.com/watch?v=2C71YTKklT8) design pattern.
 
 Garbage Collection
 ---
