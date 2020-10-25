@@ -28,7 +28,7 @@ class SubProcess:
         self.state = state
 
     def do(self):
-        """Jakas logika biznesowa odpowiedzialna za stan danego procesu"""
+        """Jakas logika biznesowa odpowiedzialna za stan danego sub procesu"""
 
 
 class MasterProc:
