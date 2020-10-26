@@ -58,9 +58,9 @@ class MasterProc:
 
 if __name__ == '__main__':
 
-    ugotowac_miesko = SubProcess(state=ProcStateStatus.DONE)
-    przygotowac_salatke = SubProcess(state=ProcStateStatus.DONE)
-    upiec_frytki = SubProcess(state=ProcStateStatus.DONE)
+    sub_proc1 = SubProcess(state=ProcStateStatus.DONE)
+    sub_proc2 = SubProcess(state=ProcStateStatus.ERROR)
+    sub_proc3 = SubProcess(state=ProcStateStatus.DONE)
 
-    obiad = MasterProc([ugotowac_miesko, przygotowac_salatke, upiec_frytki])
-    print(obiad.get_current_state())
+    master_proc = MasterProc([sub_proc1, sub_proc2, sub_proc3])
+    print(master_proc.get_current_state())

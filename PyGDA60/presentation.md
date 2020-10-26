@@ -13,7 +13,7 @@ Definicja
 
 GOF:
 ```
-Allows an object to alter its behaviours when its internal state changes. The object will appear to change class.
+Allows an object to alter its behaviours when its internal state changes. The object will appear to change its class.
 ```
 
 Wzorzec z grupy tzw. czynnościowych (behavioral) skupiających się na opisywaniu

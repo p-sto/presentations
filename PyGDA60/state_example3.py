@@ -41,8 +41,8 @@ class MasterProc:
     """Proces, ktorego stan bedzie zalezec od statusow subprocesow"""
 
     def __init__(self, subprocesses: Optional[List[SubProcess]] = None):
-        self.state = MasterProcessState()
         self.subprocesses = subprocesses
+        self.state_machine = MasterProcessState()
 
     @staticmethod
     def _get_status_based_on_subproc(subprc_status: ProcStateStatus,
@@ -59,17 +59,19 @@ class MasterProc:
         method = mapping.get(subprc_status)
         method()
 
-    def get_current_state(self) -> MasterProcessState:
+    def get_current_state(self) -> State:
+        if not self.subprocesses:
+            return MasterProcessState.ERROR     # maly hax na init state'a
         for proc in self.subprocesses:
-            self._get_status_based_on_subproc(proc.state, self.state)
-        return self.state
+            self._get_status_based_on_subproc(proc.state, self.state_machine)
+        return self.state_machine.current_state
 
 
 if __name__ == '__main__':
 
-    ugotowac_miesko = SubProcess(state=ProcStateStatus.DONE)
-    przygotowac_salatke = SubProcess(state=ProcStateStatus.DONE)
-    upiec_frytki = SubProcess(state=ProcStateStatus.DONE)
+    sub_proc1 = SubProcess(state=ProcStateStatus.TIM)
+    sub_proc2 = SubProcess(state=ProcStateStatus.DONE)
+    sub_proc3 = SubProcess(state=ProcStateStatus.DONE)
 
-    obiad = MasterProc([ugotowac_miesko, przygotowac_salatke, upiec_frytki])
-    print(obiad.get_current_state())
+    master_proc = MasterProc([sub_proc1, sub_proc2, sub_proc3])
+    print(master_proc.get_current_state())
