@@ -69,7 +69,7 @@ class MasterProc:
 
 if __name__ == '__main__':
 
-    sub_proc1 = SubProcess(state=ProcStateStatus.TIM)
+    sub_proc1 = SubProcess(state=ProcStateStatus.TIMEOUT)
     sub_proc2 = SubProcess(state=ProcStateStatus.DONE)
     sub_proc3 = SubProcess(state=ProcStateStatus.DONE)
 
