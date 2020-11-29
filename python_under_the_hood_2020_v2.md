@@ -150,7 +150,6 @@ Segmentation fault (core dumped)
 >>> a = None
 >>> sys.getrefcount(None)
 >>> 2523
-
 ```
 
 #### Remember:
@@ -158,11 +157,55 @@ None is just an one of a kind object! ...who told that singleton is not OK?
  
 ... now you may know why we compare to None using `is` operator
 
+shallow copy vs deep copy
+---
+
+```python
+>>> import copy
+>>> a = [1, 2, 3, [4, 5]]
+>>> b = copy.copy(a)
+>>> a[0] = 0
+>>> a
+[0, 2, 3, [4, 5]]
+>>> b
+[1, 2, 3, [4, 5]]
+>>> a[-1][-1] = 0
+>>> a
+[0, 2, 3, [4, 0]]
+>>> b
+[1, 2, 3, [4, 0]]
+>>> 
+```
+
+Shallow copy will keep refrences to all objects within copied object. `copy.deepcopy` will clone everything.
+
 Weakref
 ---
 
+```python
+>>> import weakref
+>>> import sys
+>>> class Foo():
+...     pass
+>>> a = Foo()
+>>> sys.getrefcount(a)
+2
+>>> b = weakref.ref(a)
+>>> sys.getrefcount(a)
+2
+>>> sys.getrefcount(b)
+2
+>>> del a
+>>> b
+<weakref at 0x7f67cbf3d170; dead>
+```
+weakref cannot be created for every kind of object (doesn't work on builtin containers).
 
-
+Check also:
+```
+weakref.WeakValueDictionary()
+weakref.WeakKeyDictionary()
+```
 
 Small integers caching
 ---
@@ -252,6 +295,10 @@ Fatal Python error: GC object already tracked
 Aborted (core dumped)
 ```
 
+There are 2 major mechanisms:
+1. reference counting
+2. searching for unreachable objects
+
 Python's GC key words:  
 - reference counting
 - reference cycle detection
@@ -261,6 +308,15 @@ Python's GC key words:
 
 You may also want to compare Python's GC solution to Ruby's,
 which uses techniques called `free list` and `stop the world algorithm`.
+
+If object is marked as `tracked` by GC, then it will be removed immediately, however,
+if not - it will be moved to unreachable objects and destroyed during GC collection.
+Objects which are immutable (except tuple) are not tracked by default.
+
+In situation when reference cycle occurs, objects are not destroyed immediately 
+when ref_count = 0, these are first treated as `tentatively unreachable`.
+The goal of the mechanism is to ensure that they are truly useless. For more
+information check [here](https://devguide.python.org/garbage_collector/#why-moving-unreachable-objects-is-better)
 
 PyObject
 ---
@@ -279,7 +335,6 @@ typedef struct _object {
 
 ```
 PyObject acts as a interface.
-
 
 source:  
 https://github.com/python/cpython/blob/master/Include/object.h  
@@ -479,4 +534,5 @@ https://github.com/python/cpython/blob/master/Python/ceval.c#L1490
 [CPython Internals - Book](https://realpython.com/products/cpython-internals-book/)  
 [Python interpreter consts definitions](https://github.com/python/cpython/blob/master/Include/pyport.h)  
 [GC explained](https://rushter.com/blog/python-garbage-collector/)
-[James Powell: What You Got Is What You Got ](https://www.youtube.com/watch?v=wbYG9KTxwdE)
+[Python's GC documentation](https://devguide.python.org/garbage_collector/)
+[James Powell: What You Got Is What You Got](https://www.youtube.com/watch?v=wbYG9KTxwdE)
