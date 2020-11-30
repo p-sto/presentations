@@ -28,7 +28,7 @@ if exception is thrown, it checks for `not equal`.
 Small changes in input values produces big change in input. Good hash functions 
 provide small probability of collisions.
 
-Hash ca be used for comparisons:
+Hash can be used for comparisons:
 ```python
 hash(1) == hash(1.0)
 ``` 
