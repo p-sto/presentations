@@ -63,10 +63,7 @@ A: Probably...
 Q: Why use it?   
 A: to use dict's interface   
 Q: When?   
-A: When U have a good reason for that*... (and you probably don't have)
-
-Just remember:  
-`Special cases aren't special enough to break the rules.`
+A: When U have a good reason for that... (and you probably don't have)
 
 CPython quirk (and only CPython AFAIK):
 ```python
