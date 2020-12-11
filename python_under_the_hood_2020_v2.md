@@ -14,7 +14,7 @@ Objects, names, binding
 
 Id, hash
 ---
-Short recap important builtins and operators - `id`, `hash`, `is`, `==`
+Short recap - important builtins and operators: `id`, `hash`, `is`, `==`
 
 ```python
 >>> id(bar)
@@ -24,7 +24,8 @@ Short recap important builtins and operators - `id`, `hash`, `is`, `==`
 2. `==` operator by default uses `is` or throws `NotImplemented`,  
 if exception is thrown, it checks for `not equal`.
  [click](https://docs.python.org/3/reference/datamodel.html#object.__eq__)
-3. `hash` is a fine grained function returning unique value based on input.  
+3. `hash` is a alias to object's `__hash__` method, bu default it's a fine grained function
+returning unique value based on input. But it can overriden to some custom implementation.  
 Small changes in input values produces big change in input. Good hash functions 
 provide small probability of collisions.
 
@@ -33,7 +34,7 @@ Hash can be used for comparisons:
 hash(1) == hash(1.0)
 ``` 
 
-But if hash is just a unique number, then...
+But if hash is just a unique number and we can override default behaviour, then...
 
 ### dicts can be hashable!
 
