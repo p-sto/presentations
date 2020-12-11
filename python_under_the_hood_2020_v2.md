@@ -84,7 +84,7 @@ source: `https://github.com/python/cpython/blob/master/Python/pyhash.c#L194`
 
 Ref count
 ---
-Warning - sys.getrefcount and others will wrongly work in ipython.
+Warning - sys.getrefcount may wrongly work in ipython.
 
 ```python
 >>> import sys
